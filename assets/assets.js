@@ -31,6 +31,18 @@ import venu_watch_image from "./venu_watch_image.png";
 import upload_area from "./upload_area.png";
 import cannon_camera_image from "./cannon_camera_image.png";
 import sony_airbuds_image from "./sony_airbuds_image.png";
+import hot_chocolate from "./hot_chocolate.jpg";
+import slider_1 from "./slider_1.png";
+import raw from "./raw.jpg";
+import slider_2 from "./slider_2.png";
+import slider_3 from "./slider_3.jpg";
+import yogurt from "./yogurt.png";
+import coffee from "./coffee.jpg";
+import cheese from "./cheese.jpg";
+import cream from "./cream.jpg";
+import pancakes from "./pancakes.jpg";
+import cow_milk from "./cow_milk.png";
+import cillage from "./cillage.svg";
 import asus_laptop_image from "./asus_laptop_image.png";
 import projector_image from "./projector_image.png";
 import playstation_image from "./playstation_image.png";
@@ -41,6 +53,8 @@ import sm_controller_image from "./sm_controller_image.png";
 import jbl_soundbox_image from "./jbl_soundbox_image.png";
 import boy_with_laptop_image from "./boy_with_laptop_image.png";
 import checkmark from "./checkmark.png";
+import ice_cream from "./ice_cream.jpg";
+import butter from "./butter.png";
 import product_details_page_apple_earphone_image1 from "./product_details_page_apple_earphone_image1.png";
 import product_details_page_apple_earphone_image2 from "./product_details_page_apple_earphone_image2.png";
 import product_details_page_apple_earphone_image3 from "./product_details_page_apple_earphone_image3.png";
@@ -50,15 +64,24 @@ import product_details_page_apple_earphone_image5 from "./product_details_page_a
 export const assets = {
   logo,
   search_icon,
+  slider_1,
+  slider_2,
+  slider_3,
+  hot_chocolate,
   user_icon,
   cart_icon,
+  cream,
+  ice_cream,
   add_icon,
+  cheese,
+  yogurt,
   order_icon,
   instagram_icon,
   facebook_icon,
   twitter_icon,
   box_icon,
   product_list_icon,
+  cillage,
   menu_icon,
   arrow_icon,
   increase_arrow,
@@ -67,6 +90,7 @@ export const assets = {
   my_location_image,
   arrow_icon_white,
   heart_icon,
+  raw,
   star_icon,
   redirect_icon,
   star_dull_icon,
@@ -77,7 +101,11 @@ export const assets = {
   bose_headphone_image,
   apple_earphone_image,
   samsung_s23phone_image,
+  coffee,
+  pancakes,
+  cow_milk,
   venu_watch_image,
+  butter,
   upload_area,
   cannon_camera_image,
   sony_airbuds_image,
@@ -132,149 +160,148 @@ export const HomeIcon = () => (
 
 export const productsDummyData = [
   {
-    "_id": "67a1f4e43f34a77b6dde9144",
+    "_id": "67a2d1a13f34a77b6dde9201",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Apple AirPods Pro 2nd gen",
-    "description": "Apple AirPods Pro (2nd Gen) with MagSafe Case (USB-C) provide excellent sound, active noise cancellation, and a comfortable fit. The USB-C case ensures quick charging, and they pair seamlessly with Apple devices for an effortless audio experience.",
-    "price": 499.99,
-    "offerPrice": 399.99,
+    "name": "Organic Cow Milk - 1L",
+    "description": "Fresh, organic cow milk sourced from free-range cows. Ideal for daily nutrition, packed with calcium and protein.",
+    "price": 3.99,
+    "offerPrice": 2.99,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/k4dafzhwhgcn5tnoylrw.webp",
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/j212frakb8hdrhvhajhg.webp",
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/imwuugqxsajuwqpkegb5.webp",
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/k1oqaslw5tb3ebw01vvj.webp"
+      ice_cream,
+     
     ],
-    "category": "Earphone",
-    "date": 1738667236865,
+    "category": "Dairy",
+    "date": 1738670000001,
     "__v": 0
   },
   {
-    "_id": "67a1f52e3f34a77b6dde914a",
+    "_id": "67a2d1b63f34a77b6dde9202",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Bose QuietComfort 45",
-    "description": "The Bose QuietComfort 45 headphones are engineered for exceptional sound quality and unparalleled noise cancellation. With a 24-hour battery life and comfortable, lightweight design, these headphones deliver premium audio for any environment. Whether on a flight, in the office, or at home, the Bose QC45 blocks out distractions, offering an immersive listening experience.",
-    "price": 429.99,
-    "offerPrice": 329.99,
+    "name": "Full Cream Cow Milk - 2L",
+    "description": "Rich and creamy milk from grass-fed cows. Best suited for coffee, tea, and homemade yogurt.",
+    "price": 5.49,
+    "offerPrice": 4.49,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/m16coelz8ivkk9f0nwrz.webp"
+      cream,
     ],
-    "category": "Headphone",
-    "date": 1738667310300,
+    "category": "Dairy",
+    "date": 1738670000002,
     "__v": 0
   },
   {
-    "_id": "67a1f5663f34a77b6dde914c",
+    "_id": "67a2d1cb3f34a77b6dde9203",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Samsung Galaxy S23",
-    "description": "The Samsung Galaxy S23 offers an all-encompassing mobile experience with its advanced AMOLED display, offering vibrant visuals and smooth interactions. Equipped with top-of-the-line fitness tracking features and cutting-edge technology, this phone delivers outstanding performance. With powerful hardware, a sleek design, and long battery life, the S23 is perfect for those who demand the best in mobile innovation.",
-    "price": 899.99,
-    "offerPrice": 799.99,
+    "name": "A2 Desi Cow Milk - 500ml",
+    "description": "A2 protein-rich milk from native Indian cows. Naturally easy to digest and free from A1 casein.",
+    "price": 2.99,
+    "offerPrice": 2.49,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/xjd4eprpwqs7odbera1w.webp"
+      butter,
     ],
-    "category": "Smartphone",
-    "date": 1738667366224,
+    "category": "Dairy",
+    "date": 1738670000003,
     "__v": 0
   },
   {
-    "_id": "67a1f5993f34a77b6dde914e",
+    "_id": "67a2d1e13f34a77b6dde9204",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Garmin Venu 2",
-    "description": "The Garmin Venu 2 smartwatch blends advanced fitness tracking with sophisticated design, offering a wealth of features such as heart rate monitoring, GPS, and sleep tracking. Built with a 24-hour battery life, this watch is ideal for fitness enthusiasts and anyone looking to enhance their daily lifestyle. With a stunning AMOLED display and customizable watch faces, the Venu 2 combines technology with style seamlessly.",
-    "price": 399.99,
-    "offerPrice": 349.99,
+    "name": "Pasteurized Cow Milk - 1L",
+    "description": "Clean and safe pasteurized milk for all age groups. Great for everyday meals and beverages.",
+    "price": 3.49,
+    "offerPrice": 2.89,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/hdfi4u3fmprazpnrnaga.webp"
+      raw,
     ],
-    "category": "Earphone",
-    "date": 1738667417511,
+    "category": "Dairy",
+    "date": 1738670000004,
     "__v": 0
   },
   {
-    "_id": "67a1f5ef3f34a77b6dde9150",
+    "_id": "67a2d1f83f34a77b6dde9205",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "PlayStation 5",
-    "description": "The PlayStation 5 takes gaming to the next level with ultra-HD graphics, a powerful 825GB SSD, and ray tracing technology for realistic visuals. Whether you're into high-action games or immersive storytelling, the PS5 delivers fast loading times, seamless gameplay, and stunning visuals. It's a must-have for any serious gamer looking for the ultimate gaming experience.",
-    "price": 599.99,
-    "offerPrice": 499.99,
+    "name": "Farm Fresh Cow Milk - 5L",
+    "description": "Bulk-packaged fresh cow milk straight from the farm. Perfect for large families or cafes.",
+    "price": 12.99,
+    "offerPrice": 10.99,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/dd3l13vfoartrgbvkkh5.webp"
+      yogurt,
     ],
-    "category": "Accessories",
-    "date": 1738667503075,
+    "category": "Dairy",
+    "date": 1738670000005,
     "__v": 0
   },
   {
-    "_id": "67a1f70c3f34a77b6dde9156",
+    "_id": "67a2d20e3f34a77b6dde9206",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Canon EOS R5",
-    "description": "The Canon EOS R5 is a game-changing mirrorless camera with a 45MP full-frame sensor, offering ultra-high resolution and the ability to shoot 8K video. Whether you're capturing professional-quality stills or cinematic video footage, this camera delivers exceptional clarity, speed, and color accuracy. With advanced autofocus and in-body stabilization, the R5 is ideal for photographers and videographers alike.",
-    "price": 4199.99,
-    "offerPrice": 3899.99,
+    "name": "Low-Fat Cow Milk - 1L",
+    "description": "Delicious low-fat cow milk with all the nutrition and half the fat. Great for weight-watchers.",
+    "price": 3.49,
+    "offerPrice": 2.79,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/r5h370zuujvrw461c6wy.webp"
+      pancakes,
     ],
-    "category": "Camera",
-    "date": 1738667788883,
+    "category": "Dairy",
+    "date": 1738670000006,
     "__v": 0
   },
   {
-    "_id": "67a1f7c93f34a77b6dde915a",
+    "_id": "67a2d2223f34a77b6dde9207",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "MacBook Pro 16",
-    "description": "The MacBook Pro 16, powered by Apple's M2 Pro chip, offers outstanding performance with 16GB RAM and a 512GB SSD. Whether you're editing high-resolution video, developing software, or multitasking with ease, this laptop can handle the toughest tasks. It features a stunning Retina display with True Tone technology, making it a top choice for professionals in creative industries or anyone who demands premium performance in a portable form.",
-    "price": 2799.99,
-    "offerPrice": 2499.99,
+    "name": "Raw Cow Milk - 1L",
+    "description": "Unpasteurized raw cow milk for those who prefer natural nutrition and full cream taste.",
+    "price": 4.49,
+    "offerPrice": 3.99,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/rzri7kytphxalrm9rubd.webp"
+      hot_chocolate,
     ],
-    "category": "Laptop",
-    "date": 1738667977644,
+    "category": "Dairy",
+    "date": 1738670000007,
     "__v": 0
   },
   {
-    "_id": "67a1f8363f34a77b6dde915c",
+    "_id": "67a2d2363f34a77b6dde9208",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Sony WF-1000XM5",
-    "description": "Sony WF-1000XM5 true wireless earbuds deliver immersive sound with Hi-Res Audio and advanced noise cancellation technology. Designed for comfort and quality, they provide a stable, snug fit for a secure listening experience. Whether you're working out or traveling, these earbuds will keep you connected with the world around you while enjoying rich, clear sound.",
-    "price": 349.99,
-    "offerPrice": 299.99,
+    "name": "Premium Cow Milk - Glass Bottle",
+    "description": "Eco-friendly glass bottled cow milk, maintaining freshness and taste longer.",
+    "price": 4.99,
+    "offerPrice": 3.99,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/e3zjaupyumdkladmytke.webp"
+      cow_milk,
     ],
-    "category": "Earphone",
-    "date": 1738668086331,
+    "category": "Dairy",
+    "date": 1738670000008,
     "__v": 0
   },
   {
-    "_id": "67a1f85e3f34a77b6dde915e",
+    "_id": "67a2d24a3f34a77b6dde9209",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "Samsung Projector 4k",
-    "description": "The Samsung 4K Projector offers an immersive cinematic experience with ultra-high-definition visuals and realistic color accuracy. Equipped with a built-in speaker, it delivers rich sound quality to complement its stunning 4K resolution. Perfect for movie nights, gaming, or presentations, this projector is the ultimate choice for creating an at-home theater experience or professional setting.",
-    "price": 1699.99,
-    "offerPrice": 1499.99,
+    "name": "Cow Milk for Kids - 500ml",
+    "description": "Nutritionally fortified cow milk for growing children. Rich in Vitamin D and calcium.",
+    "price": 2.29,
+    "offerPrice": 1.99,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/qqdcly8a8vkyciy9g0bw.webp"
+     cheese,
     ],
-    "category": "Accessories",
-    "date": 1738668126660,
+    "category": "Dairy",
+    "date": 1738670000009,
     "__v": 0
   },
   {
-    "_id": "67a1fa4b3f34a77b6dde9166",
+    "_id": "67a2d25e3f34a77b6dde9210",
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
-    "name": "ASUS ROG Zephyrus G16",
-    "description": "The ASUS ROG Zephyrus G16 gaming laptop is powered by the Intel Core i9 processor and features an RTX 4070 GPU, delivering top-tier gaming and performance. With 16GB of RAM and a 1TB SSD, this laptop is designed for gamers who demand extreme power, speed, and storage. Equipped with a stunning 16-inch display, it's built to handle the most demanding titles and applications with ease.",
-    "price": 2199.99,
-    "offerPrice": 1999.99,
+    "name": "Toned Cow Milk - 1L",
+    "description": "Ideal for those managing fat intake, this toned cow milk offers a balanced taste and nutrition.",
+    "price": 3.19,
+    "offerPrice": 2.69,
     "image": [
-      "https://raw.githubusercontent.com/avinashdm/gs-images/main/quickcart/wig1urqgnkeyp4t2rtso.webp"
+     coffee,
     ],
-    "category": "Laptop",
-    "date": 1738668619198,
+    "category": "Dairy",
+    "date": 1738670000010,
     "__v": 0
   }
-]
+];
+
 
 export const userDummyData = {
   "_id": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",

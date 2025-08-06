@@ -6,27 +6,27 @@ const HeaderSlider = () => {
   const sliderData = [
     {
       id: 1,
-      title: "Experience Pure Sound - Your Perfect Headphones Awaits!",
-      offer: "Limited Time Offer 30% Off",
-      buttonText1: "Buy now",
-      buttonText2: "Find more",
-      imgSrc: assets.header_headphone_image,
+      title: "Fresh from the Farm - Premium Dairy Cow Milk Just for You!",
+      offer: "Get 20% Off on Your First Subscription!",
+      buttonText1: "Subscribe Now",
+      buttonText2: "View Products",
+      imgSrc: assets.slider_1,
     },
     {
       id: 2,
-      title: "Next-Level Gaming Starts Here - Discover PlayStation 5 Today!",
-      offer: "Hurry up only few lefts!",
-      buttonText1: "Shop Now",
-      buttonText2: "Explore Deals",
-      imgSrc: assets.header_playstation_image,
+      title: "Creamy Goodness Daily - Try Our Organic A2 Cow Milk!",
+      offer: "Flat 15% Off for This Week Only!",
+      buttonText1: "Buy Now",
+      buttonText2: "See Benefits",
+      imgSrc: assets.slider_2,
     },
     {
       id: 3,
-      title: "Power Meets Elegance - Apple MacBook Pro is Here for you!",
-      offer: "Exclusive Deal 40% Off",
-      buttonText1: "Order Now",
+      title: "Healthy Families Choose Farm-Fresh Cow Milk!",
+      offer: "Free Delivery on First 3 Orders!",
+      buttonText1: "Start Shopping",
       buttonText2: "Learn More",
-      imgSrc: assets.header_macbook_image,
+      imgSrc: assets.slider_3,
     },
   ];
 
@@ -67,7 +67,11 @@ const HeaderSlider = () => {
                 </button>
                 <button className="group flex items-center gap-2 px-6 py-2.5 font-medium">
                   {slide.buttonText2}
-                  <Image className="group-hover:translate-x-1 transition" src={assets.arrow_icon} alt="arrow_icon" />
+                  <Image
+                    className="group-hover:translate-x-1 transition"
+                    src={assets.arrow_icon}
+                    alt="arrow_icon"
+                  />
                 </button>
               </div>
             </div>
