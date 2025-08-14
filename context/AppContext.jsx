@@ -29,7 +29,7 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         setProducts(data.products);
       } else {
-        toast.error(data.message);
+        toast.error(data.message,"lop");
       }
     } catch (error) {
       toast.error(data.message);
