@@ -30,7 +30,7 @@ const Orders = () => {
       toast.error(error.message);
     }
   };
-
+console.log(orders);
   useEffect(() => {
     if (user) {
       fetchSellerOrders();
