@@ -10,7 +10,11 @@ const OrderSummary = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
-
+  const [code,setCode] = useState("");
+  const [newcode,setNewcode] = useState("");
+  const [couponstatus,setCouponstatus] = useState(false);
+  const [genstatus,setGenstatus] = useState(false);
+  const [discount,setDiscount] = useState();
   // Fetch addresses
   const fetchUserAddresses = async () => {
     try {
@@ -31,16 +35,75 @@ const OrderSummary = () => {
       toast.error(error.message);
     }
   };
+const generateStatus = async()=>{
+  try{
+      const token = await getToken();
+      const { data } = await axios.get("/api/coupon/search", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if(!data.success){
+        setGenstatus(true);
+      }
 
+  }
+  catch(error){
+toast.error(error.message);
+  }
+}
+const applyCoupon = async()=>{
+  try{
+const token = await getToken();
+      const { data } = await axios.get("/api/coupon/applycoupon", {
+        headers: { Authorization: `Bearer ${token}` },
+        
+      },{code});
+      if(data.success){
+        setCouponstatus(true);
+        setCode("");
+      }
+  }
+  catch(error){
+    toast.error(error.message);
+  }
+}
+const generateCoupon = async()=>{
+  try{
+    const token = await getToken();
+const { data } = await axios.post("/api/coupon/newcoupon", {
+        headers: { Authorization: `Bearer ${token}` },
+        
+      },{code:newcode});
+      if(data.success){
+        
+        setNewcode("");
+      }
+  }
+  catch(error){
+     toast.error(error.message);
+  }
+}
+const getDiscount = async()=>{
+  try{
+const token = await getToken();
+const { data } = await axios.get("/api/coupon/UserSearch", {
+        headers: { Authorization: `Bearer ${token}` },
+        
+      });
+      if(data.success){
+        setDiscount(data.dis);
+        toast.success("Order placed!");
+      }
+  }
+  catch(error){
+     toast.error(error.message);
+  }
+}
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
     setIsDropdownOpen(false);
   };
 
-  const createOrder = async () => {
-    toast.success("Order placed!");
-  };
-
+  
   useEffect(() => {
     if (user) {
       fetchUserAddresses();
@@ -120,11 +183,30 @@ const OrderSummary = () => {
             type="text"
             placeholder="Enter promo code"
             className="flex-grow outline-none px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 bg-gray-50"
+            onChange={(e)=>setCode(e.code)}
+            value={code}
           />
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition">
+          <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
+          onClick={applyCoupon}>
             Apply
           </button>
         </div>
+         <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition mt-3"
+         onClick={generateStatus}>
+            Generate
+          </button>
+          { genstatus &&(<div className="flex gap-2 mt-2">
+          <input
+            type="text"
+            placeholder="Enter promo code"
+            className="flex-grow outline-none px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 bg-gray-50"
+            value={newcode}
+            onChange={(e)=>setNewcode(e.newcode)}/>
+          <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
+          onClick={generateCoupon}>
+            Coupon
+          </button>
+        </div>)}
       </div>
 
       <hr className="border-gray-200 mb-4" />
@@ -149,18 +231,25 @@ const OrderSummary = () => {
             {Math.floor(getCartAmount() * 0.02)}
           </span>
         </div>
+        { couponstatus &&(<div className="flex justify-between text-sm">
+          <span>Discount to use coupon (2%)</span>
+          <span>
+            -{currency}
+            {Math.ceil(getCartAmount() * 0.02)}
+          </span>
+        </div>)}
         <div className="flex justify-between text-lg font-semibold border-t pt-3">
           <span>Total</span>
           <span>
             {currency}
-            {getCartAmount() + Math.floor(getCartAmount() * 0.02)}
+            {getCartAmount() + Math.floor(getCartAmount() * 0.02)-Math.ceil(getCartAmount() * 0.02)}
           </span>
         </div>
       </div>
 
       {/* Place Order */}
       <button
-        onClick={createOrder}
+        onClick={getDiscount}
         className="w-full mt-6 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white py-3 rounded-lg font-semibold shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
       >
         Place Order
