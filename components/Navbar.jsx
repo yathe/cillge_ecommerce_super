@@ -48,6 +48,12 @@ const Navbar = () => {
         >
           Contact
         </Link>
+         <Link
+          href="https://zoom-clone-six-gules.vercel.app/"
+          className="hover:text-yellow-800 transition-colors duration-200"
+        >
+          Camera
+        </Link>
 
         {isSeller && (
           <button
