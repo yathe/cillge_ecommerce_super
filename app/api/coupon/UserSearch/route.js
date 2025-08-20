@@ -3,24 +3,27 @@ import Coupon from "@/models/GebnerateCoupon"
 import { getAuth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
-
-export async function GET(request){
+export async function GET(request) {
   try {
-    const {userId}=getAuth(request)
+    const { userId } = getAuth(request)
     await connectDB()
-    const getdiscount = await Coupon.findOne({ownerUserId:userId});
-    if(!getdiscount){
-        return NextResponse.json({ success: false, message: error.message});
+    
+    const coupon = await Coupon.findOne({ ownerUserId: userId });
+    if (!coupon) {
+      return NextResponse.json({ success: false, message: "No coupon found" });
     }
-    if(!getdiscount.discount || getdiscount.discount===0){
-        return 0;
+    
+    if (!coupon.discount || coupon.discount === 0) {
+      return NextResponse.json({ success: true, discount: 0 });
     }
-    const dis = getdiscount.discount;
-    await Coupon.updateOne({_id:userId},
-        {$set:{discount:0}}
-    );
-    return NextResponse.json({ success:true, dis})
+    
+    const discount = coupon.discount;
+    // Reset discount to 0 after retrieving it
+    coupon.discount = 0;
+    await coupon.save();
+    
+    return NextResponse.json({ success: true, discount });
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message})
+    return NextResponse.json({ success: false, message: error.message });
   }
 }

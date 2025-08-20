@@ -10,11 +10,11 @@ const OrderSummary = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
-  const [code,setCode] = useState("");
-  const [newcode,setNewcode] = useState("");
-  const [couponstatus,setCouponstatus] = useState(false);
-  const [genstatus,setGenstatus] = useState(false);
-  const [discount,setDiscount] = useState();
+  const [code, setCode] = useState("");
+  const [newcode, setNewcode] = useState("");
+  const [couponstatus, setCouponstatus] = useState(false);
+  const [genstatus, setGenstatus] = useState(false);
+  const [discount, setDiscount] = useState();
   // Fetch addresses
   const fetchUserAddresses = async () => {
     try {
@@ -35,75 +35,80 @@ const OrderSummary = () => {
       toast.error(error.message);
     }
   };
-const generateStatus = async()=>{
-  try{
+  const generateStatus = async () => {
+    try {
       const token = await getToken();
       const { data } = await axios.get("/api/coupon/search", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if(!data.success){
+      if (!data.success) {
         setGenstatus(true);
       }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const applyCoupon = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/coupon/applycoupon",
+        { code },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-  }
-  catch(error){
-toast.error(error.message);
-  }
-}
-const applyCoupon = async()=>{
-  try{
-const token = await getToken();
-      const { data } = await axios.get("/api/coupon/applycoupon", {
-        headers: { Authorization: `Bearer ${token}` },
-        
-      },{code});
-      if(data.success){
+      if (data.success) {
         setCouponstatus(true);
+        setDiscount(data.discount);
         setCode("");
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
       }
-  }
-  catch(error){
-    toast.error(error.message);
-  }
-}
-const generateCoupon = async()=>{
-  try{
-    const token = await getToken();
-const { data } = await axios.post("/api/coupon/newcoupon", {
-        headers: { Authorization: `Bearer ${token}` },
-        
-      },{code:newcode});
-      if(data.success){
-        
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+
+  const generateCoupon = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/coupon/newcoupon",
+        { code: newcode },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
         setNewcode("");
+        setGenstatus(false);
+        toast.success("Coupon generated successfully");
+      } else {
+        toast.error(data.message);
       }
-  }
-  catch(error){
-     toast.error(error.message);
-  }
-}
-const getDiscount = async()=>{
-  try{
-const token = await getToken();
-const { data } = await axios.get("/api/coupon/UserSearch", {
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+  const getDiscount = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.get("/api/coupon/UserSearch", {
         headers: { Authorization: `Bearer ${token}` },
-        
       });
-      if(data.success){
+      if (data.success) {
         setDiscount(data.dis);
         toast.success("Order placed!");
       }
-  }
-  catch(error){
-     toast.error(error.message);
-  }
-}
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
     setIsDropdownOpen(false);
   };
 
-  
   useEffect(() => {
     if (user) {
       fetchUserAddresses();
@@ -183,30 +188,39 @@ const { data } = await axios.get("/api/coupon/UserSearch", {
             type="text"
             placeholder="Enter promo code"
             className="flex-grow outline-none px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 bg-gray-50"
-            onChange={(e)=>setCode(e.code)}
+            onChange={(e) => setCode(e.target.value)}
             value={code}
           />
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
-          onClick={applyCoupon}>
+          <button
+            className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
+            onClick={applyCoupon}
+          >
             Apply
           </button>
         </div>
-         <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition mt-3"
-         onClick={generateStatus}>
-            Generate
-          </button>
-          { genstatus &&(<div className="flex gap-2 mt-2">
-          <input
-            type="text"
-            placeholder="Enter promo code"
-            className="flex-grow outline-none px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 bg-gray-50"
-            value={newcode}
-            onChange={(e)=>setNewcode(e.newcode)}/>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
-          onClick={generateCoupon}>
-            Coupon
-          </button>
-        </div>)}
+        <button
+          className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition mt-3"
+          onClick={() => setGenstatus(true)}
+        >
+          Generate
+        </button>
+        {genstatus && (
+          <div className="flex gap-2 mt-2">
+            <input
+              type="text"
+              placeholder="Enter promo code"
+              className="flex-grow outline-none px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 bg-gray-50"
+              value={newcode}
+              onChange={(e) => setNewcode(e.target.value)}
+            />
+            <button
+              className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
+              onClick={generateCoupon}
+            >
+              Coupon
+            </button>
+          </div>
+        )}
       </div>
 
       <hr className="border-gray-200 mb-4" />
@@ -231,18 +245,22 @@ const { data } = await axios.get("/api/coupon/UserSearch", {
             {Math.floor(getCartAmount() * 0.02)}
           </span>
         </div>
-        { couponstatus &&(<div className="flex justify-between text-sm">
-          <span>Discount to use coupon (2%)</span>
-          <span>
-            -{currency}
-            {Math.ceil(getCartAmount() * 0.02)}
-          </span>
-        </div>)}
+        {couponstatus && (
+          <div className="flex justify-between text-sm">
+            <span>Discount to use coupon (2%)</span>
+            <span>
+              -{currency}
+              {Math.ceil(getCartAmount() * 0.02)}
+            </span>
+          </div>
+        )}
         <div className="flex justify-between text-lg font-semibold border-t pt-3">
           <span>Total</span>
           <span>
             {currency}
-            {getCartAmount() + Math.floor(getCartAmount() * 0.02)-Math.ceil(getCartAmount() * 0.02)}
+            {getCartAmount() +
+              Math.floor(getCartAmount() * 0.02) -
+              Math.ceil(getCartAmount() * 0.02)}
           </span>
         </div>
       </div>

@@ -1,31 +1,32 @@
 import mongoose, { Schema } from "mongoose";
-const couponSchema = new mongoose.Schema({
-    code:{
-        type:String,required:true,unique:true,uppercase:true,
-    },
-    ownerUserId:{
-        type:Schema.Types.ObjectId,
-        ref:'User',
-        requied:true,
-    },
-    usedBy:[
-        {type:Schema.Types.ObjectId,
-            ref:"User",
 
+const couponSchema = new mongoose.Schema({
+    code: {
+        type: String,
+        required: true,
+        unique: true,
+        uppercase: true,
+    },
+    ownerUserId: {
+        type: String, // Changed from Schema.Types.ObjectId to String
+        required: true,
+    },
+    usedBy: [
+        {
+            type: String, // Changed from Schema.Types.ObjectId to String
         }
     ],
-    discount:{
-        type:Number,
-        default:5,
+    discount: {
+        type: Number,
+        default: 5,
     },
-    isActive:{
-        type:Boolean,
-        default:true
-
+    isActive: {
+        type: Boolean,
+        default: true
     },
-
-},{
-    timestamps:true
+}, {
+    timestamps: true
 });
-const Coupon = mongoose.models.coupon || mongoose.model('coupon', couponSchema);
+
+const Coupon = mongoose.models.Coupon || mongoose.model('Coupon', couponSchema);
 export default Coupon;

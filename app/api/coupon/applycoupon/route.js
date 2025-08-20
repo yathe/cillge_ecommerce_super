@@ -3,33 +3,33 @@ import Coupon from "@/models/GebnerateCoupon"
 import { getAuth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
-
-export async function GET(request){
+export async function POST(request) {
   try {
-    const {userId}=getAuth(request)
-    const {code} = await request.json();
+    const { userId } = getAuth(request)
+    const { code } = await request.json();
     await connectDB()
     
-    const coupons = await Coupon.find({code})
-    if(!coupons){
-       return NextResponse.json({ success: false, message: error.message})
+    const coupon = await Coupon.findOne({ code });
+    if (!coupon) {
+      return NextResponse.json({ success: false, message: "Invalid coupon code" })
     }
-    if(coupons.ownerUserId.equals(userId)){
-       return NextResponse.json({ success: false, message: "you cannot use your own coupon"}) 
+    if (coupon.ownerUserId === userId) {
+      return NextResponse.json({ success: false, message: "You cannot use your own coupon" }) 
     }
-    if(coupons.usedBy.includes(userId)){
-       return NextResponse.json({ success: false, message: "you have used these coupon already"})
+    if (coupon.usedBy.includes(userId)) {
+      return NextResponse.json({ success: false, message: "You have already used this coupon" })
     }
-    await Coupon.updateOne({_id:coupons._id},
-        {$push:{usedBy:userId}}
-    );
-    const totaluser = coupons.usedBy.length+1;
-    const ownerDiscount = totaluser*coupons.discount;
-    await Coupon.updateOne({_id:coupons.ownerUserId},
-        {$set:{discount:ownerDiscount}}
-    );
-    return NextResponse.json({ success:true})
+    
+    // Add user to usedBy array
+    coupon.usedBy.push(userId);
+    await coupon.save();
+    
+    return NextResponse.json({ 
+      success: true,
+      discount: coupon.discount,
+      message: "Coupon applied successfully"
+    })
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message})
+    return NextResponse.json({ success: false, message: error.message })
   }
 }

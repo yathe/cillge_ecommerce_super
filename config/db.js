@@ -16,8 +16,12 @@ async function connectDB(){
     }
 
     cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/cillage`,opts).then(mongoose => {
-      return mongoose
-    })
+      console.log("Connected to MongoDB");
+      return mongoose;
+    }).catch((error) => {
+      console.error("MongoDB connection error:", error);
+      throw error;
+    });
   }
   cached.conn = await cached.promise
   return cached.conn
