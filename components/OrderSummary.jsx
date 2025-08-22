@@ -1,87 +1,92 @@
+// Import context hook to access global app state and functions
 import { useAppContext } from "@/context/AppContext";
+// Import React and hooks
 import React, { useEffect, useState } from "react";
+// Axios for making API requests
 import axios from "axios";
+// Toast for showing success/error notifications
 import toast from "react-hot-toast";
 
 const OrderSummary = () => {
-  const { currency, router, getCartCount, getCartAmount, getToken, user } =
-    useAppContext();
+  // Extract values and functions from AppContext (global state)
+  const {
+    currency, // current currency symbol (e.g. $, ₹)
+    router, // Next.js router for navigation
+    getCartCount, // function to get total cart item count
+    getCartAmount, // function to get total cart amount
+    getToken, // function to fetch user's auth token
+    user, // current logged-in user
+    cartItems, // cart items object (productId -> qty)
+    setCartItems, // setter to update cart items
+  } = useAppContext();
 
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userAddresses, setUserAddresses] = useState([]);
-  const [code, setCode] = useState("");
-  const [newcode, setNewcode] = useState("");
-  const [couponstatus, setCouponstatus] = useState(false);
-  const [genstatus, setGenstatus] = useState(false);
-  const [discount, setDiscount] = useState();
-  // Fetch addresses
+  // Local states
+  const [selectedAddress, setSelectedAddress] = useState(null); // selected shipping address
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // address dropdown open/close
+  const [userAddresses, setUserAddresses] = useState([]); // list of user addresses
+  const [code, setCode] = useState(""); // promo code entered
+  const [newcode, setNewcode] = useState(""); // new coupon code when generating
+  const [couponstatus, setCouponstatus] = useState(false); // flag: coupon applied?
+  const [genstatus, setGenstatus] = useState(false); // flag: show generate coupon input?
+  const [discount, setDiscount] = useState(0); // discount amount
+
+  // 🔹 Fetch user addresses from backend
   const fetchUserAddresses = async () => {
     try {
-      const token = await getToken();
+      const token = await getToken(); // get JWT token
       const { data } = await axios.get("/api/user/get-address", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (data.success) {
-        setUserAddresses(data.addresses);
+        setUserAddresses(data.addresses); // save addresses
         if (data.addresses.length > 0) {
-          setSelectedAddress(data.addresses[0]);
+          setSelectedAddress(data.addresses[0]); // preselect first address
         }
       } else {
-        toast.error(data.message);
+        toast.error(data.message); // show error if failed
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message); // show error message
     }
   };
-  const generateStatus = async () => {
-    try {
-      const token = await getToken();
-      const { data } = await axios.get("/api/coupon/search", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!data.success) {
-        setGenstatus(true);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+
+  // 🔹 Apply coupon entered by user
   const applyCoupon = async () => {
     try {
       const token = await getToken();
       const { data } = await axios.post(
         "/api/coupon/applycoupon",
-        { code },
+        { code }, // send coupon code
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.success) {
-        setCouponstatus(true);
-        setDiscount(data.discount);
-        setCode("");
-        toast.success(data.message);
+        setCouponstatus(true); // mark coupon applied
+        setDiscount(data.discount); // set discount from backend
+        setCode(""); // clear input
+        toast.success(data.message); // success message
       } else {
-        toast.error(data.message);
+        toast.error(data.message); // show backend error
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     }
   };
 
+  // 🔹 Generate a new coupon (admin-like feature?)
   const generateCoupon = async () => {
     try {
       const token = await getToken();
       const { data } = await axios.post(
         "/api/coupon/newcoupon",
-        { code: newcode },
+        { code: newcode }, // send new coupon code to create
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.success) {
-        setNewcode("");
-        setGenstatus(false);
+        setNewcode(""); // reset input
+        setGenstatus(false); // hide generate form
         toast.success("Coupon generated successfully");
       } else {
         toast.error(data.message);
@@ -90,6 +95,8 @@ const OrderSummary = () => {
       toast.error(error.response?.data?.message || error.message);
     }
   };
+
+  // 🔹 Fetch discount info for current user
   const getDiscount = async () => {
     try {
       const token = await getToken();
@@ -97,23 +104,82 @@ const OrderSummary = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (data.success) {
-        setDiscount(data.dis);
-        toast.success("Order placed!");
+        setDiscount(data.dis); // set discount amount
+        toast.success("Order placed!"); // confirmation
       }
     } catch (error) {
       toast.error(error.message);
     }
   };
+
+  // 🔹 Handle selecting an address from dropdown
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
-    setIsDropdownOpen(false);
+    setIsDropdownOpen(false); // close dropdown
   };
 
+  // 🔹 Create order and send to backend
+  const createOrder = async () => {
+    try {
+      // Require address
+      if (!selectedAddress) {
+        return toast.error("Please select an address");
+      }
+
+      // Convert cart object into array of {product, quantity}
+      let cartItemsArray = Object.keys(cartItems).map((key) => ({
+        product: key,
+        quantity: cartItems[key],
+      }));
+      // Remove zero-quantity items
+      cartItemsArray = cartItemsArray.filter((item) => item.quantity > 0);
+
+      if (cartItemsArray.length === 0) {
+        return toast.error("Cart is empty");
+      }
+
+      // Send order request
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/order/create",
+        {
+          address: selectedAddress._id, // only send address id
+          items: cartItemsArray, // send items
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.message); // show success
+        setCartItems({}); // clear cart
+        router.push("/order-placed"); // navigate to confirmation page
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // 🔹 Place order = first check discount then create order
+  const handlePlaceOrder = async () => {
+    await getDiscount();
+    await createOrder();
+  };
+
+  // 🔹 Fetch addresses when user logs in
   useEffect(() => {
     if (user) {
       fetchUserAddresses();
     }
   }, [user]);
+
+  // 🔹 Price calculations
+  const subtotal = getCartAmount(); // base amount
+  const tax = Math.floor(subtotal * 0.02); // 2% tax
+  const total = subtotal + tax - (discount || 0); // final total after discount
 
   return (
     <div className="w-full md:w-96 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
@@ -122,21 +188,24 @@ const OrderSummary = () => {
       </h2>
       <hr className="border-gray-200 mb-6" />
 
-      {/* Address Selection */}
+      {/* ---------- Address Selection ---------- */}
       <div className="mb-6">
         <label className="text-sm font-semibold text-gray-600 block mb-2">
           Select Address
         </label>
         <div className="relative">
+          {/* Dropdown toggle */}
           <button
             className="peer w-full text-left px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-300 transition flex justify-between items-center"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
+            {/* Show selected address or placeholder */}
             <span className="truncate">
               {selectedAddress
                 ? `${selectedAddress.fullName}, ${selectedAddress.area}, ${selectedAddress.city}`
                 : "Select Address"}
             </span>
+            {/* Dropdown arrow */}
             <svg
               className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
                 isDropdownOpen ? "rotate-180" : ""
@@ -155,6 +224,7 @@ const OrderSummary = () => {
             </svg>
           </button>
 
+          {/* Dropdown list of addresses */}
           {isDropdownOpen && (
             <ul className="absolute w-full bg-white border border-gray-200 shadow-lg mt-1 rounded-lg z-10 max-h-48 overflow-auto">
               {userAddresses.map((address, index) => (
@@ -167,6 +237,7 @@ const OrderSummary = () => {
                   {address.state}
                 </li>
               ))}
+              {/* Add new address option */}
               <li
                 onClick={() => router.push("/add-address")}
                 className="px-4 py-2 text-center text-orange-600 hover:bg-orange-50 cursor-pointer font-medium"
@@ -178,12 +249,13 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      {/* Promo Code */}
+      {/* ---------- Promo Code Section ---------- */}
       <div className="mb-6">
         <label className="text-sm font-semibold text-gray-600 block mb-2">
           Promo Code
         </label>
         <div className="flex gap-2">
+          {/* Input for coupon */}
           <input
             type="text"
             placeholder="Enter promo code"
@@ -191,6 +263,7 @@ const OrderSummary = () => {
             onChange={(e) => setCode(e.target.value)}
             value={code}
           />
+          {/* Apply button */}
           <button
             className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition"
             onClick={applyCoupon}
@@ -198,6 +271,7 @@ const OrderSummary = () => {
             Apply
           </button>
         </div>
+        {/* Show coupon generator input when requested */}
         <button
           className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-lg font-medium transition mt-3"
           onClick={() => setGenstatus(true)}
@@ -225,13 +299,13 @@ const OrderSummary = () => {
 
       <hr className="border-gray-200 mb-4" />
 
-      {/* Price Details */}
+      {/* ---------- Price Details ---------- */}
       <div className="space-y-3 text-gray-700">
         <div className="flex justify-between text-sm">
           <span className="uppercase">Items {getCartCount()}</span>
           <span>
             {currency}
-            {getCartAmount()}
+            {subtotal}
           </span>
         </div>
         <div className="flex justify-between text-sm">
@@ -242,32 +316,32 @@ const OrderSummary = () => {
           <span>Tax (2%)</span>
           <span>
             {currency}
-            {Math.floor(getCartAmount() * 0.02)}
+            {tax}
           </span>
         </div>
-        {couponstatus && (
+        {/* Show discount row if coupon applied */}
+        {couponstatus && discount > 0 && (
           <div className="flex justify-between text-sm">
-            <span>Discount to use coupon (2%)</span>
+            <span>Discount</span>
             <span>
               -{currency}
-              {Math.ceil(getCartAmount() * 0.02)}
+              {discount}
             </span>
           </div>
         )}
+        {/* Final total */}
         <div className="flex justify-between text-lg font-semibold border-t pt-3">
           <span>Total</span>
           <span>
             {currency}
-            {getCartAmount() +
-              Math.floor(getCartAmount() * 0.02) -
-              Math.ceil(getCartAmount() * 0.02)}
+            {total}
           </span>
         </div>
       </div>
 
-      {/* Place Order */}
+      {/* ---------- Place Order Button ---------- */}
       <button
-        onClick={getDiscount}
+        onClick={handlePlaceOrder}
         className="w-full mt-6 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white py-3 rounded-lg font-semibold shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
       >
         Place Order
