@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const couponSchema = new mongoose.Schema({
     code: {
@@ -8,17 +8,22 @@ const couponSchema = new mongoose.Schema({
         uppercase: true,
     },
     ownerUserId: {
-        type: String, // Changed from Schema.Types.ObjectId to String
+        type: String,
         required: true,
     },
-    usedBy: [
-        {
-            type: String, // Changed from Schema.Types.ObjectId to String
-        }
-    ],
-    discount: {
+    referredUsers: [{
+        userId: String,
+        totalSpent: { type: Number, default: 0 },
+        totalBenefit: { type: Number, default: 0 },
+        purchaseCount: { type: Number, default: 0 }
+    }],
+    discountPercentage: {
         type: Number,
         default: 5,
+    },
+    ongoingBenefitPercentage: {
+        type: Number,
+        default: 2,
     },
     isActive: {
         type: Boolean,

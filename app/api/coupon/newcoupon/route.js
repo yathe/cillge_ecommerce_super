@@ -18,8 +18,9 @@ export async function POST(request) {
     const newCoupon = await Coupon.create({
       code,
       ownerUserId: userId, // This is now a string
-      usedBy: [],
-      discount: 5,
+       referredUsers: [],
+      discountPercentage: 5,
+      ongoingBenefitPercentage: 2,
       isActive: true
     });
     

@@ -16,19 +16,32 @@ export async function POST(request) {
     if (coupon.ownerUserId === userId) {
       return NextResponse.json({ success: false, message: "You cannot use your own coupon" }) 
     }
-    if (coupon.usedBy.includes(userId)) {
-      return NextResponse.json({ success: false, message: "You have already used this coupon" })
+    
+    // Check if user has already used this coupon
+    const existingUser = coupon.referredUsers.find(user => user.userId === userId);
+    
+    if (existingUser) {
+      // User has used this coupon before, they can use it again
+      return NextResponse.json({ 
+        success: true,
+        discount: coupon.discountPercentage,
+        message: "Coupon applied successfully"
+      })
+    } else {
+      // First time user of this coupon
+      coupon.referredUsers.push({
+        userId: userId,
+        totalSpent: 0,
+        totalBenefit: 0
+      });
+      await coupon.save();
+      
+      return NextResponse.json({ 
+        success: true,
+        discount: coupon.discountPercentage,
+        message: "Coupon applied successfully"
+      })
     }
-    
-    // Add user to usedBy array
-    coupon.usedBy.push(userId);
-    await coupon.save();
-    
-    return NextResponse.json({ 
-      success: true,
-      discount: coupon.discount,
-      message: "Coupon applied successfully"
-    })
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message })
   }
