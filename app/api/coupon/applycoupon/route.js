@@ -16,7 +16,14 @@ export async function POST(request) {
     if (coupon.ownerUserId === userId) {
       return NextResponse.json({ success: false, message: "You cannot use your own coupon" }) 
     }
-    
+    //check it one coupon only use on user
+    if(coupon.referredUsers[0].userId.length==1){
+      return NextResponse.json({ 
+        success: true,
+        discount: coupon.discountPercentage,
+        message: "one user it used that coupon,You not able to use it that coupon"
+      })
+    }
     // Check if user has already used this coupon
     const existingUser = coupon.referredUsers.find(user => user.userId === userId);
     
