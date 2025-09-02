@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 // Toast for showing success/error notifications
 import toast from "react-hot-toast";
-
+import { createTransaction } from "@/app/api/Transaction/actions/route";
 const OrderSummary = () => {
   // Extract values and functions from AppContext (global state)
   const {
@@ -164,10 +164,7 @@ const OrderSummary = () => {
   };
 
   // 🔹 Place order = first check discount then create order
-  const handlePlaceOrder = async () => {
-    await getDiscount();
-    await createOrder();
-  };
+  
 
   // 🔹 Fetch addresses when user logs in
   useEffect(() => {
@@ -176,6 +173,59 @@ const OrderSummary = () => {
     }
   }, [user]);
 
+ useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handlePlaceOrder = async () => {
+    await getDiscount();
+    await createOrder();
+    try {
+      const transaction = {
+        plan: "Cart Checkout",
+        amount: total * 100, // paise
+        credits: 0,
+        buyerId: user?._id,
+      };
+
+      const orderData = await axios.post("/api/Transaction/actions",transaction);
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_Razorpay_PUBLISHABLE_KEY,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Your Store",
+        description: "Cart Payment",
+        order_id: orderData.orderId,
+        handler: function (response) {
+          toast.success("Payment Successful! Order confirmed.");
+          setCartItems({});
+          router.push("/order-placed");
+        },
+        prefill: {
+          name: user?.name || "Guest",
+          email: user?.email || "guest@example.com",
+        },
+        theme: { color: "#3399cc" },
+        modal: {
+          ondismiss: function () {
+            toast.error("Payment canceled!");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      toast.error("Failed to initiate payment. Please try again.");
+    }
+  };
   // 🔹 Price calculations
   const subtotal = getCartAmount(); // base amount
   const tax = Math.floor(subtotal * 0.02); // 2% tax
