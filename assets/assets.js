@@ -5,12 +5,14 @@ import cart_icon from "./cart_icon.svg";
 import add_icon from "./add_icon.svg";
 import order_icon from "./order_icon.svg";
 import instagram_icon from "./instagram_icon.svg";
+import allanalytics from "./allanalytics.svg"
 import facebook_icon from "./facebook_icon.svg";
 import twitter_icon from "./twitter_icon.svg";
 import box_icon from "./box_icon.svg";
 import product_list_icon from "./product_list_icon.svg";
 import menu_icon from "./menu_icon.svg";
 import arrow_icon from "./arrow_icon.svg";
+import analytics_icon from "./analytics_icon.svg";
 import increase_arrow from "./increase_arrow.svg";
 import decrease_arrow from "./decrease_arrow.svg";
 import arrow_right_icon_colored from "./arrow_right_icon_colored.svg";
@@ -64,6 +66,7 @@ import product_details_page_apple_earphone_image5 from "./product_details_page_a
 export const assets = {
   logo,
   search_icon,
+  allanalytics,
   slider_1,
   slider_2,
   slider_3,
@@ -76,6 +79,7 @@ export const assets = {
   cheese,
   yogurt,
   order_icon,
+  analytics_icon,
   instagram_icon,
   facebook_icon,
   twitter_icon,
