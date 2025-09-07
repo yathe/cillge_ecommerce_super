@@ -48,7 +48,7 @@ const HeaderSlider = () => {
       <div
         className="flex transition-transform duration-700 ease-in-out"
         style={{
-          transform: `translateX(-${currentSlide * 100}%)`,
+          transform: `translateX(-₹{currentSlide * 100}%)`,
         }}
       >
         {sliderData.map((slide, index) => (
@@ -79,7 +79,7 @@ const HeaderSlider = () => {
               <Image
                 className="md:w-72 w-48"
                 src={slide.imgSrc}
-                alt={`Slide ${index + 1}`}
+                alt={`Slide ₹{index + 1}`}
               />
             </div>
           </div>
@@ -91,7 +91,7 @@ const HeaderSlider = () => {
           <div
             key={index}
             onClick={() => handleSlideChange(index)}
-            className={`h-2 w-2 rounded-full cursor-pointer ${
+            className={`h-2 w-2 rounded-full cursor-pointer ₹{
               currentSlide === index ? "bg-orange-600" : "bg-gray-500/30"
             }`}
           ></div>

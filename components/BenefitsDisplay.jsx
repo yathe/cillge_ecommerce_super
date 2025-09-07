@@ -86,7 +86,7 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
 
   // Prepare data for bar chart (per-user data)
   const barChartData = benefitsData.referredUsers.map((user, index) => ({
-    name: `User ${index + 1}`, // label as User 1, User 2, etc.
+    name: `User ₹{index + 1}`, // label as User 1, User 2, etc.
     benefits: user.totalBenefit, // your earned benefit
     spent: user.totalSpent, // total spent by user
     purchases: user.purchaseCount, // purchase count
@@ -110,7 +110,7 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-xl border p-4 ${
+      className={`bg-white rounded-lg shadow-xl border p-4 ₹{
         isModal ? "w-full max-w-4xl max-h-[90vh] overflow-y-auto" : "w-full"
       }`}
     >
@@ -162,7 +162,7 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
         {/* Your total earned benefits */}
         <div className="bg-green-50 p-4 rounded-lg">
           <div className="flex items-center">
-            <DollarSign className="w-6 h-6 mr-3 text-green-600" />
+            <div className="w-6 h-6 mr-3 text-green-600" ><p>₹</p></div>
             <div>
               <p className="text-sm text-green-800">Your Total Benefits</p>
               <p className="text-xl font-semibold">
@@ -205,9 +205,9 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
               <Tooltip
                 formatter={(value, name) => {
                   if (name === "benefits")
-                    return [`${currency}${value.toFixed(2)}`, "Your Benefits"];
+                    return [`₹{currency}₹{value.toFixed(2)}`, "Your Benefits"];
                   if (name === "spent")
-                    return [`${currency}${value.toFixed(2)}`, "Total Spent"];
+                    return [`₹{currency}₹{value.toFixed(2)}`, "Total Spent"];
                   return [value, "Purchases"];
                 }}
               />
@@ -288,20 +288,20 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
                 fill="#8884d8"
                 dataKey="value"
                 label={({ name, percent }) =>
-                  `${name}: ${(percent * 100).toFixed(0)}%`
+                  `₹{name}: ₹{(percent * 100).toFixed(0)}%`
                 }
               >
                 {/* Assign colors to slices */}
                 {pieChartData.map((entry, index) => (
                   <Cell
-                    key={`cell-${index}`}
+                    key={`cell-₹{index}`}
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
               </Pie>
               <Tooltip
                 formatter={(value) => [
-                  `${currency}${value.toFixed(2)}`,
+                  `₹{currency}₹{value.toFixed(2)}`,
                   "Amount",
                 ]}
               />

@@ -112,7 +112,7 @@ const Navbar = () => {
                 className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 
                   hover:bg-green-200 transition-all relative"
               >
-                <DollarSign className="w-5 h-5" />
+                
                 <span className="text-sm font-medium">
                   {currency}
                   {benefitsData.totalBenefits.toFixed(2)}
@@ -175,7 +175,7 @@ const Navbar = () => {
               className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800 
                 hover:bg-green-200 transition-all relative"
             >
-              <DollarSign className="w-4 h-4" />
+              <div className="w-4 h-4"><p>₹</p></div>
               {benefitsData.referredUsers.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                   {benefitsData.referredUsers.length}

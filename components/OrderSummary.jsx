@@ -154,7 +154,7 @@ const OrderSummary = () => {
       if (data.success) {
         toast.success(data.message); // show success
         setCartItems({}); // clear cart
-        router.push("/order-placed"); // navigate to confirmation page
+        
       } else {
         toast.error(data.message);
       }
@@ -186,23 +186,24 @@ const OrderSummary = () => {
   const handlePlaceOrder = async () => {
     await getDiscount();
     await createOrder();
+    
     try {
       const transaction = {
         plan: "Cart Checkout",
-        amount: total * 100, // paise
+        amount: total, // paise
         credits: 0,
         buyerId: user?._id,
       };
 
-      const orderData = await axios.post("/api/Transaction/actions",transaction);
-
+      const {data} = await axios.post("/api/Transaction/actions",{transaction:transaction});
+      
       const options = {
         key: process.env.NEXT_PUBLIC_Razorpay_PUBLISHABLE_KEY,
-        amount: orderData.amount,
-        currency: orderData.currency,
+        amount: data.amount/100,
+        currency: data.currency,
         name: "Your Store",
         description: "Cart Payment",
-        order_id: orderData.orderId,
+        order_id: data.orderId,
         handler: function (response) {
           toast.success("Payment Successful! Order confirmed.");
           setCartItems({});

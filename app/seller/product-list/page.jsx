@@ -87,7 +87,7 @@ const ProductList = () => {
                       {product.category}
                     </td>
                     <td className="px-4 py-3 font-semibold text-gray-800">
-                      ${product.offerPrice}
+                      ₹{product.offerPrice}
                     </td>
                     <td className="px-4 py-3 max-sm:hidden">
                       <button

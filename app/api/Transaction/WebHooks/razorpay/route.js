@@ -4,7 +4,7 @@ import crypto from "crypto";
 import Transaction from "@/models/Transaction";
 export async function POST(request) {
   const body = await request.text();
-
+  console.log(body,"mk");
   const sig = request.headers.get("x-razorpay-signature");
   const endpointSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -28,7 +28,7 @@ export async function POST(request) {
 
   if (eventType === "payment.captured") {
     const { id, amount, notes } = event.payload.payment.entity;
-
+   
     const transaction = {
       razorpayId: id,
       amount: amount ? amount / 100 : 0, // Razorpay sends the amount in paise

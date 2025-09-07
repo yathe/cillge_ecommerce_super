@@ -220,10 +220,10 @@ const CouponAnalytics = () => {
                           {user.userName}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ${user.totalSpent.toFixed(2)}
+                          ₹{user.totalSpent.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ${user.totalBenefit.toFixed(2)}
+                          ₹{user.totalBenefit.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {user.purchaseCount}

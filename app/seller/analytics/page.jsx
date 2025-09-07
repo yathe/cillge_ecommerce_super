@@ -79,7 +79,7 @@ const Analytics = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg">
             <h3 className="text-lg font-medium text-gray-700">Total Profit</h3>
             <p className="text-3xl font-bold text-orange-600">
-              ${analyticsData.totalProfit.toFixed(2)}
+              ₹{analyticsData.totalProfit.toFixed(2)}
             </p>
           </div>
         </div>
@@ -160,7 +160,7 @@ const Analytics = () => {
                       {application.couponCode}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      ${application.profit.toFixed(2)}
+                      ₹{application.profit.toFixed(2)}
                     </td>
                   </tr>
                 ))}
