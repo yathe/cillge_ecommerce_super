@@ -8,14 +8,26 @@ const Navbar = () => {
   const { router } = useAppContext();
 
   return (
-    <div className="flex items-center px-4 md:px-8 py-3 justify-between border-b">
+    <div
+      className="flex items-center justify-between 
+      px-4 sm:px-6 md:px-10 lg:px-16 py-3 
+      border-b bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-100 
+      shadow-md sticky top-0 z-50"
+    >
+      {/* Logo */}
       <Image
         onClick={() => router.push("/")}
-        className="w-15 lg:w-20 cursor-pointer"
+        className="w-16 sm:w-18 md:w-20 cursor-pointer transition-transform duration-300 hover:scale-105"
         src={assets.cillage}
-        alt=""
+        alt="logo"
       />
-      <button className="bg-gray-600 text-white px-5 py-2 sm:px-7 sm:py-2 rounded-full text-xs sm:text-sm">
+
+      {/* Logout Button */}
+      <button
+        className="bg-gray-700 text-white px-4 py-2 sm:px-6 sm:py-2 
+        rounded-full text-xs sm:text-sm md:text-base font-medium
+        hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
+      >
         Logout
       </button>
     </div>
