@@ -55,46 +55,49 @@ const Navbar = () => {
         />
 
         <div className="flex items-center gap-4 lg:gap-10 max-md:hidden text-sm font-medium">
-          <Link
-            href="/"
-            className="hover:text-yellow-800 transition-colors duration-200"
-          >
-            Home
-          </Link>
-          <Link
-            href="/all-products"
-            className="hover:text-yellow-800 transition-colors duration-200"
-          >
-            Shop
-          </Link>
-          <Link
-            href="/"
-            className="hover:text-yellow-800 transition-colors duration-200"
-          >
-            About Us
-          </Link>
-          <Link
-            href="/"
-            className="hover:text-yellow-800 transition-colors duration-200"
-          >
-            Contact
-          </Link>
-          <Link
-            href="https://zoom-clone-six-gules.vercel.app/"
-            className="hover:text-yellow-800 transition-colors duration-200"
-          >
-            Camera
-          </Link>
-
-          {isSeller && (
-            <button
-              onClick={() => router.push("/seller")}
-              className="text-xs px-4 py-1.5 rounded-full border border-yellow-300 bg-yellow-100 
-                hover:bg-yellow-200 hover:text-yellow-900 transition-all duration-200"
-            >
-              Seller Dashboard
-            </button>
-          )}
+           {isSeller ?(
+  <button
+    onClick={() => router.push("/seller")}
+    className="text-xs px-4 py-1.5 rounded-full border border-yellow-300 bg-yellow-100 
+      hover:bg-yellow-200 hover:text-yellow-900 transition-all duration-200"
+  >
+    Seller Dashboard
+  </button>
+ )
+:(
+  <>
+  <Link
+    href="/"
+    className="hover:text-yellow-800 transition-colors duration-200"
+  >
+    Home
+  </Link>
+  <Link
+    href="/all-products"
+    className="hover:text-yellow-800 transition-colors duration-200"
+  >
+    Shop
+  </Link>
+  <Link
+    href="/"
+    className="hover:text-yellow-800 transition-colors duration-200"
+  >
+    About Us
+  </Link>
+  <Link
+    href="/"
+    className="hover:text-yellow-800 transition-colors duration-200"
+  >
+    Contact
+  </Link>
+  <Link
+    href="https://zoom-clone-six-gules.vercel.app/"
+    className="hover:text-yellow-800 transition-colors duration-200"
+  >
+    Camera
+  </Link>
+  </>
+)}
         </div>
 
         <ul className="hidden md:flex items-center gap-5">
@@ -112,6 +115,7 @@ const Navbar = () => {
                 className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 
                   hover:bg-green-200 transition-all relative"
               >
+                
                 <span className="text-sm font-medium">
                   {currency}
                   {benefitsData.totalBenefits.toFixed(2)}
@@ -174,9 +178,7 @@ const Navbar = () => {
               className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800 
                 hover:bg-green-200 transition-all relative"
             >
-              <div className="w-4 h-4">
-                <p>₹</p>
-              </div>
+              <div className="w-4 h-4"><p>₹</p></div>
               {benefitsData.referredUsers.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                   {benefitsData.referredUsers.length}
