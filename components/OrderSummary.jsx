@@ -7,6 +7,7 @@ import axios from "axios";
 // Toast for showing success/error notifications
 import toast from "react-hot-toast";
 import { createTransaction } from "@/app/api/Transaction/actions/route";
+import FeedbackForm from "./FeedBackForm";
 const OrderSummary = () => {
   // Extract values and functions from AppContext (global state)
   const {
@@ -117,6 +118,8 @@ const OrderSummary = () => {
     setSelectedAddress(address);
     setIsDropdownOpen(false); // close dropdown
   };
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [pendingOrder, setPendingOrder] = useState(null);
 
   // 🔹 Create order and send to backend
   const createOrder = async () => {
@@ -205,9 +208,10 @@ const OrderSummary = () => {
         description: "Cart Payment",
         order_id: data.orderId,
         handler: function (response) {
-          toast.success("Payment Successful! Order confirmed.");
+          
           setCartItems({});
-          router.push("/order-placed");
+          setPendingOrder(response); // store payment info if needed
+        setShowFeedback(true);
         },
         prefill: {
           name: user?.name || "Guest",
@@ -397,6 +401,20 @@ const OrderSummary = () => {
       >
         Place Order
       </button>
+       {showFeedback && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
+            <FeedbackForm
+              onSubmit={(feedback) => {
+                console.log("User feedback:", feedback);
+                setShowFeedback(false); // close popup
+                router.push("/order-placed"); // ✅ Navigate AFTER feedback
+              }}
+              onCancel={() => setShowFeedback(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
