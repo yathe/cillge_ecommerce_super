@@ -15,6 +15,7 @@ const SideBar = () => {
       icon: assets.product_list_icon,
     },
     { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
+    { name: "FeedBack", path: "/seller/feedback", icon: assets.order_icon },
     {
       name: "Analytics",
       path: "/seller/analytics",
@@ -28,7 +29,7 @@ const SideBar = () => {
   ];
 
   return (
-    <div className="md:w-64 w-16 border-r min-h-screen text-base border-gray-300 py-2 flex flex-col">
+    <div className="md:w-64 max-md:hidden w-16 border-r min-h-screen text-base border-gray-300 py-2 flex flex-col">
       {menuItems.map((item) => {
         const isActive = pathname === item.path;
 

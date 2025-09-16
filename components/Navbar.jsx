@@ -8,12 +8,15 @@ import { useClerk, UserButton } from "@clerk/nextjs";
 import BenefitsDisplay from "./BenefitsDisplay";
 import axios from "axios";
 import { DollarSign } from "lucide-react";
-
+import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 const Navbar = () => {
   const { isSeller, router, user, getToken, currency } = useAppContext();
   const { openSignIn } = useClerk();
+  const pathname = usePathname();
   const [benefitsData, setBenefitsData] = useState(null);
   const [showBenefitsModal, setShowBenefitsModal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const fetchBenefits = async () => {
     if (!user) return;
@@ -39,7 +42,26 @@ const Navbar = () => {
       return () => clearInterval(interval);
     }
   }, [user]);
-
+const navItems = [
+      { name: "Add Product", path: "/seller", icon: assets.add_icon },
+      {
+        name: "Product List",
+        path: "/seller/product-list",
+        icon: assets.product_list_icon,
+      },
+      { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
+      { name: "FeedBack", path: "/seller/feedback", icon: assets.order_icon },
+      {
+        name: "Analytics",
+        path: "/seller/analytics",
+        icon: assets.analytics_icon,
+      },
+      {
+        name: "Coupon Analytics",
+        path: "/seller/coupon-analytics",
+        icon: assets.allanalytics,
+      },
+    ];
   return (
     <>
       <nav
@@ -161,15 +183,26 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center md:hidden gap-3">
+           {/* Seller Dashboard Button (Mobile) */}
           {isSeller && (
+            <>
             <button
               onClick={() => router.push("/seller")}
-              className="text-xs px-3 py-1.5 rounded-full border border-yellow-300 
-                bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-900 transition-all"
+              className="hidden md:block px-4 py-1.5 rounded-full border border-yellow-300 bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-900 transition-all text-xs"
             >
               Seller Dashboard
             </button>
+            <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden flex items-center"
+          >
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+            </>
           )}
+
+          {/* Hamburger / Close Button */}
+         
 
           {/* Mobile Benefits Button */}
           {user && benefitsData && benefitsData.referredUsers.length > 0 && (
@@ -228,7 +261,38 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-
+  <div
+        className={`transition-all duration-300 overflow-hidden bg-yellow-100 border-b border-gray-200 md:hidden ${
+          menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="md:hidden flex flex-col gap-3 px-4 pb-4 border-t border-gray-100 first-line items-center">
+          {navItems.map((item) => (
+             
+            <Link
+              key={item.name}
+              href={item.path}
+              onClick={() => setMenuOpen(false)}
+              className="text-gray-700 hover:text-orange-600 transition-colors py-1"
+            >
+               <div
+                            className={`flex items-center py-3 px-4 gap-3 ${
+                            (pathname === item.path)
+                                ? "border-r-4 md:border-r-[6px] bg-orange-600/10 border-orange-500/90"
+                                : "hover:bg-gray-100/90 border-white"
+                            }`}
+                          >
+                            <Image
+                              src={item.icon}
+                              alt={`${item.name.toLowerCase()}_icon`}
+                              className="w-7 h-7"
+                            />
+                            <p className="md:block  text-center">{item.name}</p>
+                          </div>
+            </Link>
+          ))}
+        </div>
+      </div>
       {/* Benefits Modal */}
       {showBenefitsModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">

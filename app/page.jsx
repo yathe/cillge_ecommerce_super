@@ -9,17 +9,25 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAppContext } from "@/context/AppContext";
 import SideBar from "@/components/seller/Sidebar";
-import Navbars from "@/components/seller/Navbar";
 import Footers from "@/components/seller/Footer";
+import { useRouter } from 'next/navigation'
+import { useEffect } from "react";
 const Home = () => {
   const {isSeller} = useAppContext();
+   const router = useRouter();
+
+  // ✅ Redirect to /seller when isSeller is true
+  useEffect(() => {
+    if (isSeller) {
+      router.push("/seller");
+    }
+  }, [isSeller, router]);
   return (
     <>
     {isSeller ?(
       <>
       <Navbar/>
       <SideBar />
-      <Navbars />
       <Footers />
       </>
     ):(
