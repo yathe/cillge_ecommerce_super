@@ -105,7 +105,7 @@ const OrderSummary = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (data.success) {
-        setDiscount(data.dis); // set discount amount
+        setDiscount(data.discount); // set discount amount
         toast.success("Order placed!"); // confirmation
       }
     } catch (error) {
@@ -193,7 +193,7 @@ const OrderSummary = () => {
     try {
       const transaction = {
         plan: "Cart Checkout",
-        amount: total, // paise
+        amount: total-(total*discount/100), // paise
         credits: 0,
         buyerId: user?._id,
       };
