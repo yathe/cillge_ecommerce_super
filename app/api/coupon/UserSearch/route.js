@@ -9,20 +9,42 @@ export async function GET(request) {
     await connectDB()
     
     const coupon = await Coupon.findOne({ ownerUserId: userId });
+    if(coupon.code){
     if (!coupon) {
       return NextResponse.json({ success: false, message: "No coupon found" });
     }
     
-    if (!coupon.discount || coupon.discount === 0) {
+    if (!coupon.discountPercentage || coupon.discountPercentage === 0) {
       return NextResponse.json({ success: true, discount: 0 });
     }
     
-    const discount = coupon.discount;
+    const discount = coupon.discountPercentage;
     // Reset discount to 0 after retrieving it
-    coupon.discount = 0;
+    coupon.discountPercentage = 0;
     await coupon.save();
     
-    return NextResponse.json({ success: true, discount });
+    return NextResponse.json({ success: true, discount });}
+    const usedCoupon = await Coupon.findOne({ "referredUsers.userId": userId });
+
+      if (!usedCoupon) {
+        return NextResponse.json({ 
+          success: false, 
+          message: "No discount available. You have not used anyone's coupon." 
+        });
+      }
+
+      // Increase the owner's discount by 2
+     for (const c of usedCoupon) {
+      c.discountPercentage = (c.discountPercentage || 5) + 2;
+      await c.save();
+    }
+
+      return NextResponse.json({ 
+        success: true, 
+        discount:0,
+        message: "You used another user's coupon. Their discount increased by 2." 
+      });
+    
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message });
   }
