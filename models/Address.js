@@ -8,6 +8,8 @@ const addressSchema = new mongoose.Schema({
   area: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },
+  latitude: { type: String, default: "" }, // Add this
+  longitude: { type: String, default: "" }, // Add this
 });
 
 const Address = mongoose.models.address || mongoose.model('address', addressSchema);

@@ -5,6 +5,17 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import dynamic from "next/dynamic";
+
+// Dynamically import the map component to avoid SSR issues
+const MapModal = dynamic(() => import("./MapModal"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+      Loading map...
+    </div>
+  ),
+});
 
 const AddAddress = () => {
   const { getToken, router } = useAppContext();
@@ -15,9 +26,13 @@ const AddAddress = () => {
     area: "",
     city: "",
     state: "",
+    latitude: "",
+    longitude: "",
   });
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState(null);
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Function to get user's current location using OpenStreetMap
   const getCurrentLocation = () => {
@@ -33,38 +48,11 @@ const AddAddress = () => {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-
-          // Use OpenStreetMap Nominatim for reverse geocoding
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch location data");
-          }
-
-          const data = await response.json();
-
-          if (data && data.address) {
-            const addr = data.address;
-
-            // Update address form with detected location
-            setAddress((prev) => ({
-              ...prev,
-              area:
-                addr.neighbourhood || addr.suburb || addr.city_district || "",
-              city: addr.city || addr.town || addr.village || addr.county || "",
-              state: addr.state || "",
-              pincode: addr.postcode || "",
-            }));
-
-            toast.success("Location detected successfully!");
-          } else {
-            setLocationError("Could not determine address from your location.");
-          }
+          await reverseGeocode(latitude, longitude);
+          toast.success("Location detected successfully!");
         } catch (error) {
           setLocationError(
-            "Failed to get address from location. Please enter manually."
+            "Failed to get address from location. Please enter manually or select from map."
           );
           console.error("Geocoding error:", error);
         } finally {
@@ -76,7 +64,7 @@ const AddAddress = () => {
         switch (error.code) {
           case error.PERMISSION_DENIED:
             setLocationError(
-              "Location access denied. Please enable location permissions in your browser settings."
+              "Location access denied. Please enable location permissions or select from map."
             );
             break;
           case error.POSITION_UNAVAILABLE:
@@ -96,6 +84,78 @@ const AddAddress = () => {
         maximumAge: 60000,
       }
     );
+  };
+
+  // Reverse geocoding function
+  const reverseGeocode = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch location data");
+      }
+
+      const data = await response.json();
+
+      if (data && data.address) {
+        const addr = data.address;
+
+        setAddress((prev) => ({
+          ...prev,
+          area:
+            addr.neighbourhood ||
+            addr.suburb ||
+            addr.city_district ||
+            addr.road ||
+            "",
+          city: addr.city || addr.town || addr.village || addr.county || "",
+          state: addr.state || "",
+          pincode: addr.postcode || "",
+          latitude: latitude.toString(),
+          longitude: longitude.toString(),
+        }));
+
+        setSelectedLocation({ lat: latitude, lng: longitude });
+      } else {
+        throw new Error("Could not determine address from coordinates.");
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Open map modal with current location if available
+  const openMapModal = () => {
+    if (selectedLocation) {
+      setShowMapModal(true);
+    } else if (address.latitude && address.longitude) {
+      setSelectedLocation({
+        lat: parseFloat(address.latitude),
+        lng: parseFloat(address.longitude),
+      });
+      setShowMapModal(true);
+    } else {
+      // Try to get approximate location based on other address fields or use default
+      const defaultLocation = { lat: 20.5937, lng: 78.9629 }; // India center
+      setSelectedLocation(defaultLocation);
+      setShowMapModal(true);
+    }
+  };
+
+  // Handle location selection from map
+  const handleMapLocationSelect = async (latlng) => {
+    try {
+      setSelectedLocation(latlng);
+      await reverseGeocode(latlng.lat, latlng.lng);
+      setShowMapModal(false);
+      toast.success("Location selected from map!");
+    } catch (error) {
+      toast.error(
+        "Could not get address for selected location. Please enter manually."
+      );
+    }
   };
 
   useEffect(() => {
@@ -139,51 +199,78 @@ const AddAddress = () => {
 
               {/* Location Detection Section */}
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <h3 className="text-lg font-semibold text-gray-700">
-                    Auto-Detect Location
+                    Location Options
                   </h3>
-                  <button
-                    type="button"
-                    onClick={getCurrentLocation}
-                    disabled={isLocating}
-                    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition disabled:bg-blue-300"
-                  >
-                    {isLocating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Detecting...
-                      </>
-                    ) : (
-                      <>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Detect My Location
-                      </>
-                    )}
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={getCurrentLocation}
+                      disabled={isLocating}
+                      className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition disabled:bg-blue-300"
+                    >
+                      {isLocating ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Detecting...
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Auto-Detect
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={openMapModal}
+                      className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293A1 1 0 0118 6v10a1 1 0 01-.293.707L14 14.586V3.586l3.707 1.707z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Choose on Map
+                    </button>
+                  </div>
                 </div>
 
                 {locationError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
                     {locationError}
                   </div>
                 )}
 
-                {!locationError && !isLocating && (
-                  <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
-                    We'll use your device's location to automatically fill in
-                    your address details.
+                {/* Selected Coordinates Display */}
+                {(address.latitude || address.longitude) && (
+                  <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span>📍 Location coordinates saved:</span>
+                      <code className="bg-green-100 px-2 py-1 rounded">
+                        Lat: {address.latitude}, Lng: {address.longitude}
+                      </code>
+                    </div>
                   </div>
                 )}
               </div>
@@ -287,6 +374,14 @@ const AddAddress = () => {
                   />
                 </div>
 
+                {/* Hidden coordinates fields */}
+                <input type="hidden" name="latitude" value={address.latitude} />
+                <input
+                  type="hidden"
+                  name="longitude"
+                  value={address.longitude}
+                />
+
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg font-semibold shadow-lg transition-all mt-6"
@@ -313,11 +408,11 @@ const AddAddress = () => {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold mb-4">
-                  Automatic Location Detection
+                  Multiple Location Options
                 </h3>
                 <p className="mb-6">
-                  We use your device's location services to automatically fill
-                  in your address details for a faster checkout experience.
+                  Choose how you want to provide your location for accurate
+                  delivery.
                 </p>
                 <ul className="space-y-3 text-left">
                   <li className="flex items-center">
@@ -333,7 +428,7 @@ const AddAddress = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    Faster checkout process
+                    Auto-detect using your device GPS
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -348,7 +443,7 @@ const AddAddress = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    Accurate delivery information
+                    Select precisely on interactive map
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -363,7 +458,7 @@ const AddAddress = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    Secure and private
+                    Enter manually for complete control
                   </li>
                 </ul>
               </div>
@@ -371,6 +466,16 @@ const AddAddress = () => {
           </div>
         </div>
       </div>
+
+      {/* Map Modal */}
+      {showMapModal && (
+        <MapModal
+          selectedLocation={selectedLocation}
+          onLocationSelect={handleMapLocationSelect}
+          onClose={() => setShowMapModal(false)}
+        />
+      )}
+
       <Footer />
     </>
   );
