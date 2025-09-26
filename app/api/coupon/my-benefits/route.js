@@ -10,7 +10,7 @@ export async function GET(request) {
     
     // Find all coupons owned by this user
     const coupons = await Coupon.find({ ownerUserId: userId });
-    
+    console.log(userId);
     let totalBenefits = 0;
     let referredUsers = [];
     
