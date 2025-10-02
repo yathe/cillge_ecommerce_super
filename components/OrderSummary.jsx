@@ -123,49 +123,48 @@ const OrderSummary = () => {
 
   // 🔹 Create order and send to backend
   const createOrder = async () => {
-    try {
-      // Require address
-      if (!selectedAddress) {
-        return toast.error("Please select an address");
-      }
-
-      // Convert cart object into array of {product, quantity}
-      let cartItemsArray = Object.keys(cartItems).map((key) => ({
-        product: key,
-        quantity: cartItems[key],
-      }));
-      // Remove zero-quantity items
-      cartItemsArray = cartItemsArray.filter((item) => item.quantity > 0);
-
-      if (cartItemsArray.length === 0) {
-        return toast.error("Cart is empty");
-      }
-
-      // Send order request
-      const token = await getToken();
-      const { data } = await axios.post(
-        "/api/order/create",
-        {
-          address: selectedAddress._id, // only send address id
-          items: cartItemsArray, // send items
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (data.success) {
-        toast.success(data.message); // show success
-        setCartItems({}); // clear cart
-        
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
+  try {
+    if (!selectedAddress) {
+      return toast.error("Please select an address");
     }
-  };
 
+    let cartItemsArray = Object.keys(cartItems).map((key) => ({
+      product: key,
+      quantity: cartItems[key],
+    }));
+    cartItemsArray = cartItemsArray.filter((item) => item.quantity > 0);
+
+    if (cartItemsArray.length === 0) {
+      return toast.error("Cart is empty");
+    }
+
+    const token = await getToken();
+    const { data } = await axios.post(
+      "/api/order/create",
+      {
+        address: selectedAddress._id,
+        items: cartItemsArray,
+        appliedCouponCode: couponstatus ? code : null, // Pass applied coupon code
+      },
+      {
+        headers: { Authorization: `Bearer ${token} `},
+      }
+    );
+
+    if (data.success) {
+      toast.success(data.message);
+      setCartItems({});
+      // Show order details including discounts and benefits
+      if (data.orderDetails) {
+        console.log('Order Details:', data.orderDetails);
+      }
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
   // 🔹 Place order = first check discount then create order
   
 
