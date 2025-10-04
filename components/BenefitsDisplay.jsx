@@ -86,7 +86,7 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
 
   // Prepare data for bar chart (per-user data)
   const barChartData = benefitsData.referredUsers.map((user, index) => ({
-    name: `User ₹{index + 1}`, // label as User 1, User 2, etc.
+    name: user.name || user.email || "Unnamed User",
     benefits: user.totalBenefit, // your earned benefit
     spent: user.totalSpent, // total spent by user
     purchases: user.purchaseCount, // purchase count
@@ -162,7 +162,9 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
         {/* Your total earned benefits */}
         <div className="bg-green-50 p-4 rounded-lg">
           <div className="flex items-center">
-            <div className="w-6 h-6 mr-3 text-green-600" ><p>₹</p></div>
+            <div className="w-6 h-6 mr-3 text-green-600">
+              <p>₹</p>
+            </div>
             <div>
               <p className="text-sm text-green-800">Your Total Benefits</p>
               <p className="text-xl font-semibold">
@@ -205,9 +207,9 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
               <Tooltip
                 formatter={(value, name) => {
                   if (name === "benefits")
-                    return [`₹{currency}₹{value.toFixed(2)}`, "Your Benefits"];
+                    return [`₹${value.toFixed(2)}`, "Your Benefits"];
                   if (name === "spent")
-                    return [`₹{currency}₹{value.toFixed(2)}`, "Total Spent"];
+                    return [`${currency}${value.toFixed(2)}`, "Total Spent"];
                   return [value, "Purchases"];
                 }}
               />
@@ -227,7 +229,7 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                  {user?.name || user?.email}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Purchases
@@ -248,7 +250,7 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
               {benefitsData.referredUsers.map((user, index) => (
                 <tr key={index}>
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    User {index + 1}
+                    {user?.name || user?.email}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                     {user.purchaseCount}
@@ -288,22 +290,19 @@ const BenefitsDisplay = ({ isModal = false, onClose = () => {} }) => {
                 fill="#8884d8"
                 dataKey="value"
                 label={({ name, percent }) =>
-                  `₹{name}: ₹{(percent * 100).toFixed(0)}%`
+                  `${name}: ${(percent * 100).toFixed(0)}%`
                 }
               >
                 {/* Assign colors to slices */}
                 {pieChartData.map((entry, index) => (
                   <Cell
-                    key={`cell-₹{index}`}
+                    key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value) => [
-                  `₹{currency}₹{value.toFixed(2)}`,
-                  "Amount",
-                ]}
+                formatter={(value) => [`₹${value.toFixed(2)}`, "Amount"]}
               />
               <Legend />
             </PieChart>
